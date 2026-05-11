@@ -28,8 +28,32 @@ tasks {
     publishing.singleVariant("release")
 }
 
+// --- Aster internal Nexus (apx-nexus.toolsapple.net, HTTPS only) -----------
+val apolloLocalProps = java.util.Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+val apolloNexusUser: String? =
+    apolloLocalProps.getProperty("nexus.username") ?: System.getenv("MAVEN_ACCOUNT")
+val apolloNexusPassword: String? =
+    apolloLocalProps.getProperty("nexus.password") ?: System.getenv("MAVEN_PASSWORD")
+
 afterEvaluate {
     publishing {
+        repositories {
+            maven {
+                name = "Apollo"
+                val isSnapshot = (project.extra.get(KEY_PUBLISH_VERSION)?.toString() ?: "").endsWith("SNAPSHOT")
+                url = uri(
+                    if (isSnapshot) "https://apx-nexus.toolsapple.net/repository/maven-snapshots"
+                    else "https://apx-nexus.toolsapple.net/repository/android"
+                )
+                credentials {
+                    username = apolloNexusUser
+                    password = apolloNexusPassword
+                }
+            }
+        }
         publications {
             register<MavenPublication>("release") {
                 afterEvaluate { from(components["release"]) }
@@ -74,11 +98,15 @@ afterEvaluate {
     }
 }
 
+val hasSigningKey = !System.getenv("SIGNING_KEY").isNullOrBlank()
 signing {
-    useInMemoryPgpKeys(
-        System.getenv("SIGNING_KEY_ID"),
-        System.getenv("SIGNING_KEY"),
-        System.getenv("SIGNING_PASSWORD")
-    )
-    sign(publishing.publications)
+    isRequired = hasSigningKey
+    if (hasSigningKey) {
+        useInMemoryPgpKeys(
+            System.getenv("SIGNING_KEY_ID"),
+            System.getenv("SIGNING_KEY"),
+            System.getenv("SIGNING_PASSWORD")
+        )
+        sign(publishing.publications)
+    }
 }

@@ -8,14 +8,17 @@ const val KEY_SDK_NAME = "SDK_NAME"
 const val DEFAULT_PUBLISH_GROUP = "com.reown"
 
 //Latest versions
-const val BOM_VERSION = "1.6.13"
-const val FOUNDATION_VERSION = "1.6.13"
-const val CORE_VERSION = "1.6.13"
-const val SIGN_VERSION = "1.6.13"
-const val NOTIFY_VERSION = "1.6.13"
-const val WALLETKIT_VERSION = "1.6.13"
-const val APPKIT_VERSION = "1.6.13"
-const val MODAL_CORE_VERSION = "1.6.13"
+// Aster internal release: upstream 1.6.13 + scopedProperties deserialization fix.
+// Published to https://apx-nexus.toolsapple.net/repository/android via :publishToApollo.
+// Bump the .N suffix on every release that needs to ship.
+const val BOM_VERSION = "1.6.13-aster.1"
+const val FOUNDATION_VERSION = "1.6.13-aster.1"
+const val CORE_VERSION = "1.6.13-aster.1"
+const val SIGN_VERSION = "1.6.13-aster.1"
+const val NOTIFY_VERSION = "1.6.13-aster.1"
+const val WALLETKIT_VERSION = "1.6.13-aster.1"
+const val APPKIT_VERSION = "1.6.13-aster.1"
+const val MODAL_CORE_VERSION = "1.6.13-aster.1"
 const val POS_VERSION = "1.2.0"
 const val PAY_VERSION = "1.0.13"
 
@@ -36,5 +39,5 @@ val jvmVersion = JavaVersion.VERSION_11
 const val MIN_SDK: Int = 23
 const val TARGET_SDK: Int = 35
 const val COMPILE_SDK: Int = 36
-val SAMPLE_VERSION_CODE = BOM_VERSION.replace(".", "").toInt()
+val SAMPLE_VERSION_CODE = BOM_VERSION.replace(Regex("[^0-9]"), "").toInt()
 const val SAMPLE_VERSION_NAME = BOM_VERSION

@@ -18,8 +18,36 @@ tasks {
     }
 }
 
+// --- Aster internal Nexus (apx-nexus.toolsapple.net, HTTPS only) -----------
+// Credentials read from rootProject/local.properties (nexus.username, nexus.password)
+// or env vars (MAVEN_ACCOUNT / MAVEN_PASSWORD), matching Android-APX's
+// scripts/nexus.gradle convention. local.properties is gitignored — never
+// commit credentials.
+val apolloLocalProps = java.util.Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+val apolloNexusUser: String? =
+    apolloLocalProps.getProperty("nexus.username") ?: System.getenv("MAVEN_ACCOUNT")
+val apolloNexusPassword: String? =
+    apolloLocalProps.getProperty("nexus.password") ?: System.getenv("MAVEN_PASSWORD")
+
 afterEvaluate {
     publishing {
+        repositories {
+            maven {
+                name = "Apollo"
+                val isSnapshot = (extra.get(KEY_PUBLISH_VERSION)?.toString() ?: "").endsWith("SNAPSHOT")
+                url = uri(
+                    if (isSnapshot) "https://apx-nexus.toolsapple.net/repository/maven-snapshots"
+                    else "https://apx-nexus.toolsapple.net/repository/android"
+                )
+                credentials {
+                    username = apolloNexusUser
+                    password = apolloNexusPassword
+                }
+            }
+        }
         publications {
             register<MavenPublication>("mavenJvm") {
                 plugins.withId("java") {
@@ -71,11 +99,18 @@ afterEvaluate {
     }
 }
 
+// Skip GPG signing when no key is configured. Apollo internal Nexus does not
+// require signed artifacts; upstream Sonatype Central does. CI still signs by
+// providing SIGNING_KEY env var.
+val hasSigningKey = !System.getenv("SIGNING_KEY").isNullOrBlank()
 signing {
-    useInMemoryPgpKeys(
-        System.getenv("SIGNING_KEY_ID"),
-        System.getenv("SIGNING_KEY"),
-        System.getenv("SIGNING_PASSWORD")
-    )
-    sign(publishing.publications)
+    isRequired = hasSigningKey
+    if (hasSigningKey) {
+        useInMemoryPgpKeys(
+            System.getenv("SIGNING_KEY_ID"),
+            System.getenv("SIGNING_KEY"),
+            System.getenv("SIGNING_PASSWORD")
+        )
+        sign(publishing.publications)
+    }
 }

@@ -14,7 +14,10 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+        // Local override: dev machine has JDK 17 but not JDK 11. Kotlin still
+        // targets JVM 11 bytecode (see kotlinOptions below), so artifacts are
+        // identical to a JDK 11 build. Revert to 11 before opening upstream PRs.
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
