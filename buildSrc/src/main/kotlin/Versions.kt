@@ -8,17 +8,18 @@ const val KEY_SDK_NAME = "SDK_NAME"
 const val DEFAULT_PUBLISH_GROUP = "com.reown"
 
 //Latest versions
-// Aster internal release: upstream 1.6.13 + scopedProperties deserialization fix.
+// Aster internal release: upstream 1.6.13 + scopedProperties deserialization fix
+// + nullable image_id in explorer/modal DTOs.
 // Published to https://apx-nexus.toolsapple.net/repository/android via :publishToApollo.
 // Bump the .N suffix on every release that needs to ship.
-const val BOM_VERSION = "1.6.13-aster.1"
-const val FOUNDATION_VERSION = "1.6.13-aster.1"
-const val CORE_VERSION = "1.6.13-aster.1"
-const val SIGN_VERSION = "1.6.13-aster.1"
-const val NOTIFY_VERSION = "1.6.13-aster.1"
-const val WALLETKIT_VERSION = "1.6.13-aster.1"
-const val APPKIT_VERSION = "1.6.13-aster.1"
-const val MODAL_CORE_VERSION = "1.6.13-aster.1"
+const val BOM_VERSION = "1.6.13-aster.2"
+const val FOUNDATION_VERSION = "1.6.13-aster.2"
+const val CORE_VERSION = "1.6.13-aster.2"
+const val SIGN_VERSION = "1.6.13-aster.2"
+const val NOTIFY_VERSION = "1.6.13-aster.2"
+const val WALLETKIT_VERSION = "1.6.13-aster.2"
+const val APPKIT_VERSION = "1.6.13-aster.2"
+const val MODAL_CORE_VERSION = "1.6.13-aster.2"
 const val POS_VERSION = "1.2.0"
 const val PAY_VERSION = "1.0.13"
 
