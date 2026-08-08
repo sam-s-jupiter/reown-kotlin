@@ -14,7 +14,7 @@ data class WalletDTO(
     @Json(name = "homepage")
     val homePage: String,
     @Json(name = "image_id")
-    val imageId: String,
+    val imageId: String?,
     @Json(name = "mobile")
     val mobile: MobileDTO,
     @Json(name = "app")

@@ -24,6 +24,52 @@ internal class DappListingsDTOJunit4Test {
     }
 
     @Test
+    fun `parse listing when image_id is null`() {
+        val adapter = moshi.adapter(DappListingsDTO::class.java)
+        val dappListingsDTO = adapter.fromJson(dappListingsJson(imageIdField = """"image_id": null,"""))
+
+        assert(dappListingsDTO != null)
+        assert(dappListingsDTO!!.listings.values.first().imageId == null)
+    }
+
+    @Test
+    fun `parse listing when image_id is missing`() {
+        val adapter = moshi.adapter(DappListingsDTO::class.java)
+        val dappListingsDTO = adapter.fromJson(dappListingsJson(imageIdField = ""))
+
+        assert(dappListingsDTO != null)
+        assert(dappListingsDTO!!.listings.values.first().imageId == null)
+    }
+
+    private fun dappListingsJson(imageIdField: String) = """
+        {
+          "listings": {
+            "listing1": {
+              "id": "listing1",
+              "name": "Test Dapp",
+              "description": null,
+              "homepage": "https://test.io/",
+              "chains": ["eip155:1"],
+              "versions": ["1"],
+              "sdks": ["sign_v1"],
+              "app_type": "dapp",
+              $imageIdField
+              "image_url": {"sm": "", "md": "", "lg": ""},
+              "app": {"browser": "", "ios": "", "android": "", "mac": "", "windows": "", "linux": "", "chrome": null, "firefox": null, "safari": null, "edge": null, "opera": null},
+              "injected": null,
+              "mobile": {"native": "", "universal": ""},
+              "desktop": {"native": "", "universal": ""},
+              "supported_standards": [],
+              "metadata": {"shortName": "Test", "colors": {"primary": "", "secondary": ""}},
+              "updatedAt": "2021-07-30T17:48:12.565532+00:00"
+            }
+          },
+          "count": 1,
+          "total": 1
+        }
+    """.trimIndent()
+
+    @Test
     fun `Uri compareTo of the same uri with no paths`() {
         val uri1 = "https://gm.walletconnect.com".toUri()
         val uri2 = "https://gm.walletconnect.com".toUri()

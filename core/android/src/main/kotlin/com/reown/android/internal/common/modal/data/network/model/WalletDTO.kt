@@ -12,7 +12,7 @@ internal data class WalletDTO(
     @Json(name = "homepage")
     val homePage: String,
     @Json(name = "image_id")
-    val imageId: String,
+    val imageId: String?,
     @Json(name = "order")
     val order: String,
     @Json(name = "mobile_link")

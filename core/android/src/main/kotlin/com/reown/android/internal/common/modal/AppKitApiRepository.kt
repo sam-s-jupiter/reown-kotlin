@@ -55,7 +55,7 @@ internal class AppKitApiRepository(
             id = walletDTO.id,
             name = walletDTO.name,
             homePage = walletDTO.homePage,
-            imageUrl = web3ModalApiUrl + "getWalletImage/${walletDTO.imageId}",
+            imageUrl = walletDTO.imageId?.let { imageId -> web3ModalApiUrl + "getWalletImage/$imageId" } ?: "",
             order = walletDTO.order,
             mobileLink = walletDTO.mobileLink,
             playStore = walletDTO.playStore,

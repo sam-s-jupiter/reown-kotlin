@@ -22,7 +22,7 @@ data class ListingDTO(
     @Json(name = "app_type")
     val appType: String,
     @Json(name = "image_id")
-    val imageId: String,
+    val imageId: String?,
     @Json(name = "image_url")
     val imageUrl: ImageUrlDTO,
     @Json(name = "app")

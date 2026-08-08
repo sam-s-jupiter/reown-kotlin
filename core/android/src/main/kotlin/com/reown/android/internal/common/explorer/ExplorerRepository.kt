@@ -125,7 +125,7 @@ class ExplorerRepository(
         versions = versions,
         sdks = sdks,
         appType = appType,
-        imageId = imageId,
+        imageId = imageId?.takeIf { it.isNotBlank() } ?: "ImageID not provided",
         imageUrl = imageUrl.toImageUrl(),
         app = app.toApp(),
         injected = injected?.map { it.toInjected() },
