@@ -4,8 +4,8 @@ import com.reown.android.internal.common.exception.CannotFindSequenceForTopic
 import com.reown.android.internal.common.model.IrnParams
 import com.reown.android.internal.common.model.Tags
 import com.reown.android.internal.common.model.type.RelayJsonRpcInteractorInterface
+import com.reown.android.internal.utils.ACTIVE_SESSION
 import com.reown.android.internal.utils.dayInSeconds
-import com.reown.android.internal.utils.weekInSeconds
 import com.reown.foundation.common.model.Topic
 import com.reown.foundation.common.model.Ttl
 import com.reown.foundation.util.Logger
@@ -34,7 +34,8 @@ internal class ExtendSessionUseCase(
             return@supervisorScope onFailure(NotSettledSessionException("$SESSION_IS_NOT_ACKNOWLEDGED_MESSAGE$topic"))
         }
 
-        val newExpiration = session.expiry.seconds + weekInSeconds
+        // now + 7d like reown-swift and the JS sign-client; adding to the stored expiry drifts past what the wallet keeps
+        val newExpiration = ACTIVE_SESSION
         sessionStorageRepository.extendSession(Topic(topic), newExpiration)
         val sessionExtend = SignRpc.SessionExtend(params = SignParams.ExtendParams(newExpiration))
         val irnParams = IrnParams(Tags.SESSION_EXTEND, Ttl(dayInSeconds), correlationId = sessionExtend.id)
