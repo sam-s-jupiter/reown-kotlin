@@ -7,6 +7,7 @@ import com.reown.foundation.common.model.PublicKey
 import com.reown.foundation.common.model.Topic
 import com.reown.foundation.util.Logger
 import com.reown.sign.common.exceptions.NotSettledSessionException
+import com.reown.sign.common.model.vo.clientsync.session.SignRpc
 import com.reown.sign.common.model.vo.sequence.SessionVO
 import com.reown.sign.storage.sequence.SessionStorageRepository
 import com.reown.android.internal.utils.currentTimeInSeconds
@@ -14,6 +15,7 @@ import com.reown.android.internal.utils.weekInSeconds
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
@@ -78,9 +80,9 @@ class ExtendSessionUseCaseTest {
     }
 
     @Test
-    fun `extend sets expiry to now plus a week instead of adding a week to the stored expiry`() = runTest {
+    fun `extend sends now plus a week and leaves the stored expiry for the wallet response`() = runTest {
         val storedExpiry = currentTimeInSeconds + 3 * 24 * 60 * 60
-        val newExpiry = slot<Long>()
+        val sent = slot<SignRpc.SessionExtend>()
         every { logger.log(any() as String) } answers { }
         every { sessionStorageRepository.isSessionValid(any()) } returns true
         every { sessionStorageRepository.getSessionWithoutMetadataByTopic(any()) } returns SessionVO(
@@ -97,13 +99,13 @@ class ExtendSessionUseCaseTest {
             pairingTopic = "pairingTopic",
             transportType = null
         )
-        every { sessionStorageRepository.extendSession(any(), capture(newExpiry)) } answers { }
-        every { jsonRpcInteractor.publishJsonRpcRequest(any(), any(), any(), any(), any(), any(), any()) } answers { }
-
-        extendSessionUseCase.extend(topic = "topic", onSuccess = {}, onFailure = { fail("onFailure should not be called") })
+        every { jsonRpcInteractor.publishJsonRpcRequest(any(), any(), capture(sent), any(), any(), any(), any()) } answers { }
 
         val before = currentTimeInSeconds
-        assertTrue(newExpiry.captured in (before - 5 + weekInSeconds)..(before + weekInSeconds))
-        assertTrue(newExpiry.captured < storedExpiry + weekInSeconds)
+        extendSessionUseCase.extend(topic = "topic", onSuccess = {}, onFailure = { fail("onFailure should not be called") })
+
+        assertTrue(sent.captured.params.expiry in (before + weekInSeconds)..(currentTimeInSeconds + weekInSeconds))
+        assertTrue(sent.captured.params.expiry < storedExpiry + weekInSeconds)
+        verify(exactly = 0) { sessionStorageRepository.extendSession(any(), any()) }
     }
 }

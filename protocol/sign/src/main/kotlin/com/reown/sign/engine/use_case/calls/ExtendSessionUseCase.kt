@@ -36,7 +36,7 @@ internal class ExtendSessionUseCase(
 
         // now + 7d like reown-swift and the JS sign-client; adding to the stored expiry drifts past what the wallet keeps
         val newExpiration = ACTIVE_SESSION
-        sessionStorageRepository.extendSession(Topic(topic), newExpiration)
+        // stored only once the wallet accepts it (OnSessionExtendResponseUseCase): a lost or rejected extend must not outlive the wallet's session
         val sessionExtend = SignRpc.SessionExtend(params = SignParams.ExtendParams(newExpiration))
         val irnParams = IrnParams(Tags.SESSION_EXTEND, Ttl(dayInSeconds), correlationId = sessionExtend.id)
 

@@ -3,6 +3,7 @@ package com.reown.sign.di
 import com.reown.android.internal.common.di.AndroidCommonDITags
 import com.reown.android.pulse.domain.InsertEventUseCase
 import com.reown.sign.engine.use_case.responses.OnSessionAuthenticateResponseUseCase
+import com.reown.sign.engine.use_case.responses.OnSessionExtendResponseUseCase
 import com.reown.sign.engine.use_case.responses.OnSessionProposalResponseUseCase
 import com.reown.sign.engine.use_case.responses.OnSessionRequestResponseUseCase
 import com.reown.sign.engine.use_case.responses.OnSessionSettleResponseUseCase
@@ -54,6 +55,8 @@ internal fun responsesModule() = module {
     }
 
     single { OnSessionUpdateResponseUseCase(sessionStorageRepository = get(), logger = get(named(AndroidCommonDITags.LOGGER))) }
+
+    single { OnSessionExtendResponseUseCase(sessionStorageRepository = get(), logger = get(named(AndroidCommonDITags.LOGGER))) }
 
     single {
         OnSessionRequestResponseUseCase(

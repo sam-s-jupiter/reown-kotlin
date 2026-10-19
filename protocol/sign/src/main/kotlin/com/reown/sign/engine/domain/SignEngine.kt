@@ -63,6 +63,7 @@ import com.reown.sign.engine.use_case.requests.OnSessionRequestUseCase
 import com.reown.sign.engine.use_case.requests.OnSessionSettleUseCase
 import com.reown.sign.engine.use_case.requests.OnSessionUpdateUseCase
 import com.reown.sign.engine.use_case.responses.OnSessionAuthenticateResponseUseCase
+import com.reown.sign.engine.use_case.responses.OnSessionExtendResponseUseCase
 import com.reown.sign.engine.use_case.responses.OnSessionProposalResponseUseCase
 import com.reown.sign.engine.use_case.responses.OnSessionRequestResponseUseCase
 import com.reown.sign.engine.use_case.responses.OnSessionSettleResponseUseCase
@@ -142,6 +143,7 @@ internal class SignEngine(
     private val onSessionAuthenticateResponseUseCase: OnSessionAuthenticateResponseUseCase,
     private val onSessionSettleResponseUseCase: OnSessionSettleResponseUseCase,
     private val onSessionUpdateResponseUseCase: OnSessionUpdateResponseUseCase,
+    private val onSessionExtendResponseUseCase: OnSessionExtendResponseUseCase,
     private val onSessionRequestResponseUseCase: OnSessionRequestResponseUseCase,
     private val reconcileOrphanSubscriptionsUseCase: ReconcileOrphanSubscriptionsUseCase,
     private val insertEventUseCase: InsertTelemetryEventUseCase,
@@ -294,6 +296,7 @@ internal class SignEngine(
                     is SignParams.SessionAuthenticateParams -> onSessionAuthenticateResponseUseCase(response, params)
                     is SignParams.SessionSettleParams -> onSessionSettleResponseUseCase(response)
                     is SignParams.UpdateNamespacesParams -> onSessionUpdateResponseUseCase(response)
+                    is SignParams.ExtendParams -> onSessionExtendResponseUseCase(response, params)
                     is SignParams.SessionRequestParams -> onSessionRequestResponseUseCase(response, params)
                 }
             }.launchIn(scope)

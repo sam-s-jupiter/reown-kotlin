@@ -104,6 +104,7 @@ internal fun engineModule() = module {
             onSessionSettleResponseUseCase = get(),
             onSessionSettleUseCase = get(),
             onSessionUpdateResponseUseCase = get(),
+            onSessionExtendResponseUseCase = get(),
             onSessionUpdateUseCase = get(),
             pairingController = get(),
             pairUseCase = get(),
